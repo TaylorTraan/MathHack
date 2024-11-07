@@ -14,6 +14,10 @@ struct QuickMathsApp: App {
             NavigationView{
                 WelcomeView()
             }
+            .environmentObject(GameViewModel(
+                difficulty: 1,
+                questionCount: 10)
+            )
         }
     }
 }

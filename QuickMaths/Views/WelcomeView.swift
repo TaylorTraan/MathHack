@@ -30,7 +30,7 @@ struct WelcomeView: View {
                     Text("Timer:")
                     TextField("Time", text: $chosenTime)
                         .multilineTextAlignment(.center)
-                        .frame(width: 50, height: 40)
+                        .frame(width: 80, height: 40)
                         .background(Color.white.opacity(0.5))
                         .cornerRadius(10)
                 }
@@ -44,7 +44,7 @@ struct WelcomeView: View {
                     }
                     .pickerStyle(SegmentedPickerStyle())
                 }
-                .frame(height: 40)
+                .padding()
                 .background(.gray)
                 .cornerRadius(10)
                 
@@ -52,12 +52,12 @@ struct WelcomeView: View {
                     Text("Questions:")
                     TextField("Number", value: $questionCount, formatter: NumberFormatter())
                         .multilineTextAlignment(.center)
-                        .frame(width: 50, height: 40)
+                        .frame(width: 80, height: 40)
                         .background(Color.white.opacity(0.5))
                         .cornerRadius(10)
                 }
             }
-            .font(.custom("American Typewriter", size: 16))
+            .font(.custom("American Typewriter", size: 18))
             .foregroundColor(.white)
             
             Spacer()
@@ -70,6 +70,7 @@ struct WelcomeView: View {
                 )
                 isGameViewActive = true
             }
+            .font(.custom("American Typewriter", size: 18))
             .padding()
             .foregroundColor(.black)
             .background(Color.white)
@@ -86,6 +87,7 @@ struct WelcomeView: View {
             
             Spacer()
         }
+        .navigationBarBackButtonHidden()
         .padding()
         .background(Color.black)
     }

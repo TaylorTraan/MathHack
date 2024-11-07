@@ -13,29 +13,47 @@ struct EndScreenView: View {
     @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
-        VStack {
-            Text("Game Over")
-                .font(.largeTitle)
-                .foregroundColor(.white)
-
-            Text("Correct Answers: \(viewModel.correctAnswers) / \(viewModel.allQuestions.count)")
-                .font(.title2)
-                .foregroundColor(.white)
-
-            Text("Score: \(viewModel.score, specifier: "%.2f")%")
-                .font(.title2)
-                .foregroundColor(.white)
-
-            Button("Return to Home") {
-                presentationMode.wrappedValue.dismiss()
+        ZStack {
+            Color.black
+                .ignoresSafeArea()
+            VStack {
+                Text("Game Over")
+                    .font(.largeTitle)
+                    .foregroundColor(.white)
+                
+                Text("Correct Answers: \(viewModel.correctAnswers) / \(viewModel.allQuestions.count)")
+                    .font(.title2)
+                    .foregroundColor(.white)
+                
+                Text("Score: \(viewModel.score, specifier: "%.2f")%")
+                    .font(.title2)
+                    .foregroundColor(.white)
+                
+                NavigationLink {
+                    WelcomeView()
+                } label: {
+                    Text("Return to Home")
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.white)
+                .cornerRadius(8)
+                .foregroundColor(.black)
+                
             }
-            .frame(maxWidth: .infinity)
             .padding()
-            .background(Color.white)
-            .cornerRadius(8)
-            .foregroundColor(.black)
+            .background(Color.black)
+            .navigationBarBackButtonHidden()
         }
-        .padding()
-        .background(Color.black)
     }
+}
+
+#Preview {
+    NavigationView {
+        EndScreenView()
+    }
+    .environmentObject(GameViewModel(
+        difficulty: 1,
+        questionCount: 10)
+    )
 }

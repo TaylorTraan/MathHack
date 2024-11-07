@@ -84,27 +84,75 @@ struct Question {
     
     // Generate double-digit or single-digit multiplication/division
     static func generateDoubleDigitOperation() -> Question {
-        // Implement more complex logic here, similar to the above example
-        return generateSingleDigitAddition() // Placeholder
+        let operations = ["*", "/", "+", "-"]
+        let operation = operations.randomElement()!
+        
+        let (text, answer): (String, Int) = {
+            let a = Int.random(in: 10...99)
+            let b = Int.random(in: 1...9)  // For division, we want a smaller divisor to avoid complex fractions
+            switch operation {
+            case "*":
+                return ("\(a) * \(b)", a * b)
+            case "/":
+                let dividend = a * b  // Ensures clean division
+                return ("\(dividend) / \(b)", a)
+            case "+":
+                let c = Int.random(in: 10...99)
+                return ("\(a) + \(c)", a + c)
+            case "-":
+                let d = Int.random(in: 10...99)
+                let total = a + d  // Ensures a non-negative result for subtraction
+                return ("\(total) - \(d)", a)
+            default:
+                return ("\(a) + \(b)", a + b) // Fallback, though this case shouldn't occur
+            }
+        }()
+        
+        return createQuestion(text: text, answer: answer)
     }
-    
+
     // Generate triple-digit addition/subtraction
     static func generateTripleDigitOperation() -> Question {
-        // Implement more complex logic here, similar to the above example
-        return generateSingleDigitAddition() // Placeholder
+        let a = Int.random(in: 100...999)
+        let b = Int.random(in: 100...999)
+        let operation = Bool.random() ? "+" : "-"
+        
+        let (text, answer) = operation == "+" ?
+            ("\(a) + \(b)", a + b) :
+            ("\(a) - \(b)", a - b)
+        
+        return createQuestion(text: text, answer: answer)
     }
-    
+
     // Generate intermediate fraction questions
     static func generateIntermediateFractionOperation() -> Question {
-        // Implement more complex logic here for fractions
-        return generateSingleDigitAddition() // Placeholder
+        let numerator = Int.random(in: 1...9)
+        let denominator = Int.random(in: 2...9)
+        let multiplier = Int.random(in: 1...10)
+        let answer = (numerator * multiplier) / denominator
+        
+        let text = "\(numerator * multiplier) / \(denominator)"
+        return createQuestion(text: text, answer: answer)
     }
-    
+
     // Generate difficult mental math questions
     static func generateComplexMentalMath() -> Question {
-        // Implement more complex logic here
-        return generateSingleDigitAddition() // Placeholder
+        let a = Int.random(in: 50...200)
+        let b = Int.random(in: 2...20)
+        let c = Int.random(in: 1...10)
+        let d = Int.random(in: 1...5)
+        
+        let expressionOptions = [
+            ("\(a) + \(b) * \(c)", a + b * c),
+            ("\(a) - \(b) * \(c)", a - b * c),
+            ("(\(a) + \(b)) / \(d)", (a + b) / d),
+            ("\(a) * \(c) + \(b)", a * c + b)
+        ]
+        
+        let (text, answer) = expressionOptions.randomElement()!
+        return createQuestion(text: text, answer: answer)
     }
+
     
     // Utility function to create a question with answer options
     private static func createQuestion(text: String, answer: Int) -> Question {

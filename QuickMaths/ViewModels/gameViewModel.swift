@@ -13,6 +13,7 @@ class GameViewModel: ObservableObject {
     @Published var timer: Int
     @Published var currentQuestionIndex = 0
     @Published var isGameOver = false
+    var initialTime: Int
 
     var allQuestions: [Question] { gameModel.questions }
     var correctAnswers: Int { gameModel.correctAnswers }
@@ -25,6 +26,7 @@ class GameViewModel: ObservableObject {
 
     init(timer: Int = 60, difficulty: Int, questionCount: Int) {
         self.timer = timer
+        self.initialTime = timer
         gameModel = GameModel(timer: timer, difficulty: difficulty, questionCount: questionCount)
     }
 
