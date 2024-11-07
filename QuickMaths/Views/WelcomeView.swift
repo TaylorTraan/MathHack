@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import RealityKit
+import Combine
 
 struct WelcomeView: View {
     @State private var chosenTime: String = "60"
@@ -16,87 +18,196 @@ struct WelcomeView: View {
     @State private var gameViewModel: GameViewModel? // Local instance for GameViewModel
     
     var body: some View {
-        VStack {
-            Spacer()
+        ZStack {
+            // Black background for the hacker feel
+            Color.black
+                .edgesIgnoringSafeArea(.all)
             
-            Text("Quick Maths")
-                .font(.custom("Marker Felt", size: 50))
-                .foregroundColor(Color.white)
-            
-            Spacer()
-            
-            VStack(spacing: 15) {
-                HStack {
-                    Text("Timer:")
-                    TextField("Time", text: $chosenTime)
-                        .multilineTextAlignment(.center)
-                        .frame(width: 80, height: 40)
-                        .background(Color.white.opacity(0.5))
-                        .cornerRadius(10)
-                }
+            // Background 3D Model
+            RealityKitView()
+                .edgesIgnoringSafeArea(.all)
+                .opacity(0.3) // Make it subtle as a background element
+
+            VStack {
+                Spacer()
                 
-                HStack {
-                    Text("Difficulty:")
-                    Picker("Difficulty", selection: $chosenDifficulty) {
-                        ForEach(1...5, id: \.self) { level in
-                            Text("\(level)")
-                        }
+                // Glitchy Title
+                Text("Quick Maths")
+                    .font(.custom("Courier", size: 50))
+                    .foregroundColor(.green)
+                    .shadow(color: .green, radius: 5, x: 0, y: 0)
+                    .modifier(GlitchEffect()) // Apply custom glitch effect
+                
+                Spacer()
+                
+                // Settings with neon green text and black backgrounds
+                VStack(spacing: 15) {
+                    HStack {
+                        Text("Timer:")
+                            .font(.custom("Courier", size: 18))
+                            .foregroundColor(.green)
+                        TextField("Time", text: $chosenTime)
+                            .multilineTextAlignment(.center)
+                            .frame(width: 80, height: 40)
+                            .background(Color.black)
+                            .foregroundColor(.green)
+                            .cornerRadius(5)
+                            .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.green, lineWidth: 1))
                     }
-                    .pickerStyle(SegmentedPickerStyle())
+                    
+                    HStack {
+                        Text("Difficulty:")
+                            .font(.custom("Courier", size: 18))
+                            .foregroundColor(.green)
+                        
+                        // Custom circular picker using HStack
+                        HStack(spacing: 10) {
+                            ForEach(1...5, id: \.self) { level in
+                                Button(action: {
+                                    chosenDifficulty = level
+                                }) {
+                                    Text("\(level)")
+                                        .font(.custom("Courier", size: 18))
+                                        .foregroundColor(chosenDifficulty == level ? .black : .green)
+                                        .frame(width: 30, height: 30) // Circle size
+                                        .background(
+                                            Circle()
+                                                .fill(chosenDifficulty == level ? Color.green : Color.black)
+                                        )
+                                        .overlay(
+                                            Circle()
+                                                .stroke(Color.green, lineWidth: chosenDifficulty == level ? 2 : 1)
+                                        )
+                                        .animation(.easeInOut(duration: 0.2), value: chosenDifficulty)
+                                }
+                            }
+                        }
+                        .padding(.vertical, 5)
+                        .background(Color.black)
+                        .cornerRadius(5)
+                    }
+                    .padding()
+                    .background(Color.black)
+                    .cornerRadius(5)
+                    .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.green, lineWidth: 1))
+
+                    
+                    HStack {
+                        Text("Questions:")
+                            .font(.custom("Courier", size: 18))
+                            .foregroundColor(.green)
+                        TextField("Number", value: $questionCount, formatter: NumberFormatter())
+                            .multilineTextAlignment(.center)
+                            .frame(width: 80, height: 40)
+                            .background(Color.black)
+                            .foregroundColor(.green)
+                            .cornerRadius(5)
+                            .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.green, lineWidth: 1))
+                    }
                 }
-                .padding()
-                .background(.gray)
-                .cornerRadius(10)
                 
-                HStack {
-                    Text("Questions:")
-                    TextField("Number", value: $questionCount, formatter: NumberFormatter())
-                        .multilineTextAlignment(.center)
-                        .frame(width: 80, height: 40)
-                        .background(Color.white.opacity(0.5))
-                        .cornerRadius(10)
+                Spacer()
+                
+                // Start Game Button
+                Button("Start Game") {
+                    gameViewModel = GameViewModel(
+                        timer: Int(chosenTime) ?? 60,
+                        difficulty: chosenDifficulty,
+                        questionCount: questionCount
+                    )
+                    isGameViewActive = true
                 }
-            }
-            .font(.custom("American Typewriter", size: 18))
-            .foregroundColor(.white)
-            
-            Spacer()
-            
-            Button("Start Game") {
-                gameViewModel = GameViewModel(
-                    timer: Int(chosenTime) ?? 60,
-                    difficulty: chosenDifficulty,
-                    questionCount: questionCount
+                .font(.custom("Courier", size: 18))
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color.green)
+                .foregroundColor(.black)
+                .cornerRadius(5)
+                .padding(.horizontal, 50)
+                
+                NavigationLink(
+                    destination: GameView()
+                        .environmentObject(gameViewModel ?? GameViewModel(
+                            difficulty: 1, questionCount: 10)
+                        ),
+                    isActive: $isGameViewActive,
+                    label: { EmptyView() }
                 )
-                isGameViewActive = true
+                
+                Spacer()
             }
-            .font(.custom("American Typewriter", size: 18))
             .padding()
-            .foregroundColor(.black)
-            .background(Color.white)
-            .cornerRadius(8)
-            
-            NavigationLink(
-                destination: GameView()
-                    .environmentObject(gameViewModel ?? GameViewModel(
-                        difficulty: 1, questionCount: 10)
-                    ),
-                isActive: $isGameViewActive,
-                label: { EmptyView() }
-            )
-            
-            Spacer()
         }
         .navigationBarBackButtonHidden()
-        .padding()
-        .background(Color.black)
     }
 }
 
+// Glitch Effect Modifier
+struct GlitchEffect: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .overlay(
+                content
+                    .foregroundColor(.green.opacity(0.8))
+                    .offset(x: 1, y: 1)
+                    .blendMode(.difference)
+            )
+            .overlay(
+                content
+                    .foregroundColor(.green.opacity(0.5))
+                    .offset(x: -1, y: -1)
+                    .blendMode(.difference)
+            )
+    }
+}
 
-// Define a custom color extension for pastel blue
-extension Color {
-    static let pastelBlue = Color(red: 0.7, green: 0.9, blue: 1.0)
+// RealityKitView for the rotating 3D model background
+struct RealityKitView: UIViewRepresentable {
+    func makeUIView(context: Context) -> ARView {
+        let arView = ARView(frame: .zero)
+        
+        // Load the .usdz model
+        if let modelEntity = try? Entity.loadModel(named: "polyhedron") {
+            modelEntity.scale = SIMD3<Float>(repeating: 0.5) // Adjust the size if needed
+            modelEntity.position = SIMD3<Float>(0, 0, -40) // Position it farther back in the scene
+            
+            // Apply neon green color
+            let neonGreenMaterial = SimpleMaterial(color: .green, isMetallic: false)
+            modelEntity.model?.materials = [neonGreenMaterial]
+
+            // Add the model entity to the ARView
+            let anchorEntity = AnchorEntity(world: .zero)
+            anchorEntity.addChild(modelEntity)
+            arView.scene.addAnchor(anchorEntity)
+
+            // Set up smooth rotation on multiple axes
+            arView.scene.subscribe(to: SceneEvents.Update.self) { event in
+                let deltaTime = Float(event.deltaTime)
+                
+                // Slow, smooth random rotation on multiple axes
+                let rotationX = deltaTime * .pi / 32
+                let rotationY = deltaTime * .pi / 24
+                let rotationZ = deltaTime * .pi / 36
+                
+                modelEntity.transform.rotation *= simd_quatf(angle: rotationX, axis: SIMD3<Float>(1, 0, 0))
+                modelEntity.transform.rotation *= simd_quatf(angle: rotationY, axis: SIMD3<Float>(0, 1, 0))
+                modelEntity.transform.rotation *= simd_quatf(angle: rotationZ, axis: SIMD3<Float>(0, 0, 1))
+            }.store(in: &context.coordinator.cancellables)
+        }
+        
+        return arView
+    }
+
+    func updateUIView(_ uiView: ARView, context: Context) {}
+    
+    // Coordinator for managing subscriptions
+    class Coordinator {
+        var cancellables: Set<AnyCancellable> = []
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        return Coordinator()
+    }
 }
 
 #Preview {
@@ -108,4 +219,5 @@ extension Color {
         questionCount: 10)
     )
 }
+
 

@@ -16,34 +16,49 @@ struct EndScreenView: View {
         ZStack {
             Color.black
                 .ignoresSafeArea()
+            
             VStack {
-                Text("Game Over")
-                    .font(.largeTitle)
-                    .foregroundColor(.white)
+                // "Game Over" Title with Neon Effect
+                Text("GAME OVER")
+                    .font(.custom("Courier", size: 40))
+                    .foregroundColor(.green)
+                    .shadow(color: .green, radius: 10)
+                    .padding(.bottom, 20)
                 
+                // Correct Answers Display
                 Text("Correct Answers: \(viewModel.correctAnswers) / \(viewModel.allQuestions.count)")
-                    .font(.title2)
-                    .foregroundColor(.white)
+                    .font(.custom("Courier", size: 20))
+                    .foregroundColor(.green)
+                    .padding(.bottom, 10)
                 
+                // Score Display
                 Text("Score: \(viewModel.score, specifier: "%.2f")%")
-                    .font(.title2)
-                    .foregroundColor(.white)
+                    .font(.custom("Courier", size: 20))
+                    .foregroundColor(.green)
+                    .padding(.bottom, 30)
                 
-                NavigationLink {
-                    WelcomeView()
-                } label: {
+                
+                // Return to Home Button
+                Button(action: {
+                    presentationMode.wrappedValue.dismiss()
+                }) {
                     Text("Return to Home")
+                        .font(.custom("Courier", size: 18))
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.green)
+                        .foregroundColor(.black)
+                        .cornerRadius(8)
+                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.green, lineWidth: 1))
                 }
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.white)
-                .cornerRadius(8)
-                .foregroundColor(.black)
+                .padding(.horizontal, 50)
                 
             }
             .padding()
-            .background(Color.black)
-            .navigationBarBackButtonHidden()
+            .background(Color.black.opacity(0.8))
+            .cornerRadius(15)
+            .overlay(RoundedRectangle(cornerRadius: 15).stroke(Color.green, lineWidth: 2))
+            .navigationBarBackButtonHidden(true)
         }
     }
 }

@@ -19,25 +19,28 @@ struct GameView: View {
             VStack {
                 Spacer()
                 
-                // Stopwatch Animation for Timer
+                // Stopwatch Animation for Timer with Neon Green Color
                 ZStack {
                     // Background Circle (Static)
                     Circle()
-                        .stroke(Color.white.opacity(0.3), lineWidth: 10)
+                        .stroke(Color.green.opacity(0.3), lineWidth: 10)
                         .frame(width: 75, height: 75)
+                    
                     
                     // Animated Countdown Circle
                     Circle()
                         .trim(from: 0, to: CGFloat(viewModel.timer) / CGFloat(viewModel.initialTime))
-                        .stroke(Color.red, lineWidth: 10)
+                        .stroke(Color.green, lineWidth: 10)
                         .rotationEffect(.degrees(-90))
                         .frame(width: 75, height: 75)
                         .animation(.linear(duration: 1), value: viewModel.timer)
                     
+                    
                     // Time Text
                     Text("\(viewModel.timer)")
-                        .font(.custom("American Typewriter", size: 20))
-                        .foregroundColor(.white)
+                        .font(.custom("Courier", size: 20))
+                        .foregroundColor(.green)
+                        .shadow(color: .green, radius: 5)
                 }
                 
                 Spacer()
@@ -65,7 +68,7 @@ struct GameView: View {
             }
             .navigationBarBackButtonHidden(true)
             .padding()
-            .foregroundColor(.white)
+            .foregroundColor(.green)
         }
     }
 }
@@ -76,8 +79,12 @@ struct QuestionCard: View {
 
     var body: some View {
         VStack(alignment: .leading) {
+            // Glitchy question text
             Text(question.text)
-                .font(.system(size: 24, weight: .bold))
+                .font(.custom("Courier", size: 30))
+                .foregroundColor(.green)
+//                .shadow(color: .green, radius: 3, x: 3, y: 5)
+//                .modifier(GlitchEffect())
                 .padding(.bottom, 5)
 
             ForEach(0..<question.options.count, id: \.self) { i in
@@ -88,17 +95,20 @@ struct QuestionCard: View {
                         .font(.system(size: 18))
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.white.opacity(0.8))
+                        .background(Color.black)
+                        .foregroundColor(.green)
+                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.green, lineWidth: 1))
                         .cornerRadius(8)
-                        .foregroundColor(.black)
                 }
             }
         }
         .padding()
-        .background(Color.white.opacity(0.6))
+        .background(Color.black.opacity(0.8))
         .cornerRadius(10)
+        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.green, lineWidth: 1))
     }
 }
+
 
 #Preview {
     GameView()
