@@ -126,7 +126,7 @@ struct WelcomeView: View {
                 .padding(.horizontal, 50)
                 
                 NavigationLink(
-                    destination: GameView()
+                    destination: GameView(isGameViewActive: $isGameViewActive) // Pass the binding here
                         .environmentObject(gameViewModel ?? GameViewModel(
                             difficulty: 1, questionCount: 10)
                         ),

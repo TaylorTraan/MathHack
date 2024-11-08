@@ -9,6 +9,7 @@ import SwiftUI
 
 struct GameView: View {
     @EnvironmentObject var viewModel: GameViewModel
+    @Binding var isGameViewActive: Bool // Accept binding from WelcomeView
     @State private var isGameOver: Bool = false
 
     var body: some View {
@@ -26,7 +27,6 @@ struct GameView: View {
                         .stroke(Color.green.opacity(0.3), lineWidth: 10)
                         .frame(width: 75, height: 75)
                     
-                    
                     // Animated Countdown Circle
                     Circle()
                         .trim(from: 0, to: CGFloat(viewModel.timer) / CGFloat(viewModel.initialTime))
@@ -34,7 +34,6 @@ struct GameView: View {
                         .rotationEffect(.degrees(-90))
                         .frame(width: 75, height: 75)
                         .animation(.linear(duration: 1), value: viewModel.timer)
-                    
                     
                     // Time Text
                     Text("\(viewModel.timer)")
@@ -57,7 +56,7 @@ struct GameView: View {
                 
                 // End Game when time is up
                 NavigationLink(
-                    destination: EndScreenView()
+                    destination: EndScreenView(isGameViewActive: $isGameViewActive)
                         .environmentObject(viewModel),
                     isActive: $viewModel.isGameOver,
                     label: { EmptyView() }
@@ -72,6 +71,7 @@ struct GameView: View {
         }
     }
 }
+
 
 struct QuestionCard: View {
     var question: Question
@@ -110,7 +110,14 @@ struct QuestionCard: View {
 }
 
 
-#Preview {
-    GameView()
-        .environmentObject(GameViewModel(difficulty: 1, questionCount: 10))
+struct GameView_Previews: PreviewProvider {
+    static var previews: some View {
+        // Define a State variable for isGameViewActive
+        @State var isGameViewActive = true
+        
+        // Provide GameView with the necessary binding and environment object
+        return GameView(isGameViewActive: $isGameViewActive)
+            .environmentObject(GameViewModel(difficulty: 1, questionCount: 10)) // Sample GameViewModel
+            .previewLayout(.device) // Use a device layout for more realistic preview
+    }
 }

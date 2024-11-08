@@ -10,7 +10,7 @@ import SwiftUI
 
 struct EndScreenView: View {
     @EnvironmentObject var viewModel: GameViewModel
-    @Environment(\.presentationMode) var presentationMode
+    @Binding var isGameViewActive: Bool // Binding to control navigation back to WelcomeView
 
     var body: some View {
         ZStack {
@@ -37,10 +37,9 @@ struct EndScreenView: View {
                     .foregroundColor(.green)
                     .padding(.bottom, 30)
                 
-                
                 // Return to Home Button
                 Button(action: {
-                    presentationMode.wrappedValue.dismiss()
+                    isGameViewActive = false // Set isGameViewActive to false to prevent returning to GameView
                 }) {
                     Text("Return to Home")
                         .font(.custom("Courier", size: 18))
@@ -63,12 +62,16 @@ struct EndScreenView: View {
     }
 }
 
-#Preview {
-    NavigationView {
-        EndScreenView()
+struct EndScreenView_Previews: PreviewProvider {
+    static var previews: some View {
+        // Define a State variable for the isGameViewActive binding
+        @State var isGameViewActive = true
+        
+        NavigationView {
+            EndScreenView(isGameViewActive: $isGameViewActive) // Provide the binding
+                .environmentObject(GameViewModel(difficulty: 1, questionCount: 10)) // Example GameViewModel for preview
+        }
+        .previewDisplayName("End Screen Preview")
+        .background(Color.black)
     }
-    .environmentObject(GameViewModel(
-        difficulty: 1,
-        questionCount: 10)
-    )
 }
