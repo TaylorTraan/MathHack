@@ -15,32 +15,35 @@ struct WelcomeView: View {
     @State private var questionCount: Int = 10
     
     @State private var isGameViewActive = false
-    @State private var gameViewModel: GameViewModel? // Local instance for GameViewModel
+    @State private var gameViewModel: GameViewModel?
+    @State private var showAlert = false
+    @State private var alertMessage = ""
+    
+    @FocusState private var isInputActive: Bool // Track focus for TextFields
     
     var body: some View {
         ZStack {
-            // Black background for the hacker feel
             Color.black
                 .edgesIgnoringSafeArea(.all)
+                .onTapGesture {
+                    isInputActive = false // Dismiss keyboard on tap
+                }
             
-            // Background 3D Model
             RealityKitView()
                 .edgesIgnoringSafeArea(.all)
-                .opacity(0.3) // Make it subtle as a background element
-
+                .opacity(0.3)
+            
             VStack {
                 Spacer()
                 
-                // Glitchy Title
-                Text("Quick Maths")
+                Text("HackerMath")
                     .font(.custom("Courier", size: 50))
                     .foregroundColor(.green)
                     .shadow(color: .green, radius: 5, x: 0, y: 0)
-                    .modifier(GlitchEffect()) // Apply custom glitch effect
+                    .modifier(GlitchEffect())
                 
                 Spacer()
                 
-                // Settings with neon green text and black backgrounds
                 VStack(spacing: 15) {
                     HStack {
                         Text("Timer:")
@@ -53,14 +56,17 @@ struct WelcomeView: View {
                             .foregroundColor(.green)
                             .cornerRadius(5)
                             .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.green, lineWidth: 1))
+                            .keyboardType(.numberPad)
+                            .focused($isInputActive)
+                            .onChange(of: chosenTime) { newValue in
+                                chosenTime = newValue.filter { "0123456789".contains($0) }
+                            }
                     }
                     
                     HStack {
                         Text("Difficulty:")
                             .font(.custom("Courier", size: 18))
                             .foregroundColor(.green)
-                        
-                        // Custom circular picker using HStack
                         HStack(spacing: 10) {
                             ForEach(1...5, id: \.self) { level in
                                 Button(action: {
@@ -69,7 +75,7 @@ struct WelcomeView: View {
                                     Text("\(level)")
                                         .font(.custom("Courier", size: 18))
                                         .foregroundColor(chosenDifficulty == level ? .black : .green)
-                                        .frame(width: 30, height: 30) // Circle size
+                                        .frame(width: 30, height: 30)
                                         .background(
                                             Circle()
                                                 .fill(chosenDifficulty == level ? Color.green : Color.black)
@@ -90,7 +96,6 @@ struct WelcomeView: View {
                     .background(Color.black)
                     .cornerRadius(5)
                     .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.green, lineWidth: 1))
-
                     
                     HStack {
                         Text("Questions:")
@@ -103,19 +108,31 @@ struct WelcomeView: View {
                             .foregroundColor(.green)
                             .cornerRadius(5)
                             .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.green, lineWidth: 1))
+                            .keyboardType(.numberPad)
+                            .focused($isInputActive)
+                            .onChange(of: questionCount) { newValue in
+                                questionCount = newValue > 0 ? newValue : questionCount
+                            }
                     }
                 }
                 
                 Spacer()
                 
-                // Start Game Button
                 Button("Start Game") {
-                    gameViewModel = GameViewModel(
-                        timer: Int(chosenTime) ?? 60,
-                        difficulty: chosenDifficulty,
-                        questionCount: questionCount
-                    )
-                    isGameViewActive = true
+                    if questionCount <= 0 {
+                        alertMessage = "Please enter a valid question count greater than 0."
+                        showAlert = true
+                    } else if Int(chosenTime) ?? 0 <= 0 {
+                        alertMessage = "Please enter a valid timer value greater than 0."
+                        showAlert = true
+                    } else {
+                        gameViewModel = GameViewModel(
+                            timer: Int(chosenTime) ?? 60,
+                            difficulty: chosenDifficulty,
+                            questionCount: questionCount
+                        )
+                        isGameViewActive = true
+                    }
                 }
                 .font(.custom("Courier", size: 18))
                 .padding()
@@ -124,12 +141,13 @@ struct WelcomeView: View {
                 .foregroundColor(.black)
                 .cornerRadius(5)
                 .padding(.horizontal, 50)
+                .alert(isPresented: $showAlert) {
+                    Alert(title: Text("Invalid Input"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+                }
                 
                 NavigationLink(
-                    destination: GameView(isGameViewActive: $isGameViewActive) // Pass the binding here
-                        .environmentObject(gameViewModel ?? GameViewModel(
-                            difficulty: 1, questionCount: 10)
-                        ),
+                    destination: GameView(isGameViewActive: $isGameViewActive)
+                        .environmentObject(gameViewModel ?? GameViewModel(difficulty: 1, questionCount: 10)),
                     isActive: $isGameViewActive,
                     label: { EmptyView() }
                 )
@@ -141,6 +159,7 @@ struct WelcomeView: View {
         .navigationBarBackButtonHidden()
     }
 }
+
 
 // Glitch Effect Modifier
 struct GlitchEffect: ViewModifier {
