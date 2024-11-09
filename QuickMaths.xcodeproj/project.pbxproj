@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D920B28F2CDEBBE9006CC74F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D920B28E2CDEBBE9006CC74F /* LaunchScreen.storyboard */; };
 		D96E1B662CDD42A500622AF7 /* EndScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96E1B652CDD42A500622AF7 /* EndScreenView.swift */; };
+		D96E1B6A2CDD73D700622AF7 /* polyhedron.usdz in Resources */ = {isa = PBXBuildFile; fileRef = D96E1B692CDD73D700622AF7 /* polyhedron.usdz */; };
 		D991C0DB2CA6316200E90718 /* QuickMathsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D991C0DA2CA6316200E90718 /* QuickMathsApp.swift */; };
 		D991C0DF2CA6316500E90718 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D991C0DE2CA6316500E90718 /* Assets.xcassets */; };
 		D991C0E22CA6316500E90718 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D991C0E12CA6316500E90718 /* Preview Assets.xcassets */; };
@@ -18,7 +20,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D920B28E2CDEBBE9006CC74F /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D96E1B652CDD42A500622AF7 /* EndScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndScreenView.swift; sourceTree = "<group>"; };
+		D96E1B692CDD73D700622AF7 /* polyhedron.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; name = polyhedron.usdz; path = ../../../polyhedron.usdz; sourceTree = "<group>"; };
 		D991C0D72CA6316200E90718 /* QuickMaths.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QuickMaths.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D991C0DA2CA6316200E90718 /* QuickMathsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickMathsApp.swift; sourceTree = "<group>"; };
 		D991C0DE2CA6316500E90718 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -65,6 +69,7 @@
 				D991C0EA2CA6317F00E90718 /* Models */,
 				D991C0DE2CA6316500E90718 /* Assets.xcassets */,
 				D991C0E02CA6316500E90718 /* Preview Content */,
+				D920B28E2CDEBBE9006CC74F /* LaunchScreen.storyboard */,
 			);
 			path = QuickMaths;
 			sourceTree = "<group>";
@@ -72,6 +77,7 @@
 		D991C0E02CA6316500E90718 /* Preview Content */ = {
 			isa = PBXGroup;
 			children = (
+				D96E1B692CDD73D700622AF7 /* polyhedron.usdz */,
 				D991C0E12CA6316500E90718 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
@@ -162,6 +168,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				D991C0E22CA6316500E90718 /* Preview Assets.xcassets in Resources */,
+				D96E1B6A2CDD73D700622AF7 /* polyhedron.usdz in Resources */,
+				D920B28F2CDEBBE9006CC74F /* LaunchScreen.storyboard in Resources */,
 				D991C0DF2CA6316500E90718 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -49,17 +49,17 @@ struct GameModel {
             
             switch difficulty {
             case 1:
-                question = Question.generateSingleDigitAddition()
+                question = Question.generateDifficulty1()
             case 2:
-                question = Question.generateDoubleDigitOperation()
+                question = Question.generateDifficulty2()
             case 3:
-                question = Question.generateTripleDigitOperation()
+                question = Question.generateDifficulty3()
             case 4:
-                question = Question.generateIntermediateFractionOperation()
+                question = Question.generateDifficulty4()
             case 5:
-                question = Question.generateComplexMentalMath()
+                question = Question.generateDifficulty5()
             default:
-                question = Question.generateSingleDigitAddition()
+                question = Question.generateDifficulty1()
             }
             
             questions.append(question)
@@ -75,21 +75,36 @@ struct Question {
     var options: [Int]
     
     // Generate simple single-digit addition
-    static func generateSingleDigitAddition() -> Question {
-        let a = Int.random(in: 0...9)
-        let b = Int.random(in: 0...9)
-        let answer = a + b
-        return createQuestion(text: "\(a) + \(b)", answer: answer)
+    static func generateDifficulty1() -> Question {
+        let operations = ["+", "-"]
+        let operation = operations.randomElement()!
+        
+        let (text, answer): (String, Int) = {
+            let a = Int.random(in: 1...9)
+            let b = Int.random(in: 1...9)  // For division, we want a smaller divisor to avoid complex fractions
+            switch operation {
+            case "+":
+                return ("\(a) + \(b)", a + b)
+            case "-":
+                let total = a + b  // Ensures a non-negative result for subtraction
+                return ("\(total) - \(b)", a)
+            default:
+                return ("\(a) + \(b)", a + b) // Fallback, though this case shouldn't occur
+            }
+        }()
+        
+        return createQuestion(text: text, answer: answer)
     }
     
     // Generate double-digit or single-digit multiplication/division
-    static func generateDoubleDigitOperation() -> Question {
+    static func generateDifficulty2() -> Question {
         let operations = ["*", "/", "+", "-"]
         let operation = operations.randomElement()!
         
         let (text, answer): (String, Int) = {
-            let a = Int.random(in: 10...99)
-            let b = Int.random(in: 1...9)  // For division, we want a smaller divisor to avoid complex fractions
+            let a = Int.random(in: 2...9)
+            let b = Int.random(in: 2...9)  // For division, we want a smaller divisor to avoid complex fractions
+            let c = Int.random(in: 10...99)
             switch operation {
             case "*":
                 return ("\(a) * \(b)", a * b)
@@ -97,12 +112,10 @@ struct Question {
                 let dividend = a * b  // Ensures clean division
                 return ("\(dividend) / \(b)", a)
             case "+":
-                let c = Int.random(in: 10...99)
-                return ("\(a) + \(c)", a + c)
+                return ("\(c) + \(a)", a + c)
             case "-":
-                let d = Int.random(in: 10...99)
-                let total = a + d  // Ensures a non-negative result for subtraction
-                return ("\(total) - \(d)", a)
+                let total = a + c  // Ensures a non-negative result for subtraction
+                return ("\(total) - \(c)", a)
             default:
                 return ("\(a) + \(b)", a + b) // Fallback, though this case shouldn't occur
             }
@@ -112,44 +125,98 @@ struct Question {
     }
 
     // Generate triple-digit addition/subtraction
-    static func generateTripleDigitOperation() -> Question {
-        let a = Int.random(in: 100...999)
-        let b = Int.random(in: 100...999)
-        let operation = Bool.random() ? "+" : "-"
+    static func generateDifficulty3() -> Question {
+        let operations = ["*", "/", "+", "-", "equate"]
+        let operation = operations.randomElement()!
         
-        let (text, answer) = operation == "+" ?
-            ("\(a) + \(b)", a + b) :
-            ("\(a) - \(b)", a - b)
+        let (text, answer): (String, Int) = {
+            let a = Int.random(in: 10...99)
+            let b = Int.random(in: 3...9)  // For division, we want a smaller divisor to avoid complex fractions
+            let c = Int.random(in: 10...99)
+            switch operation {
+            case "*":
+                return ("\(a) * \(b)", a * b)
+            case "/":
+                let dividend = a * b  // Ensures clean division
+                return ("\(dividend) / \(b)", a)
+            case "+":
+                return ("\(a) + \(c)", a + c)
+            case "-":
+                let total = a + c  // Ensures a non-negative result for subtraction
+                return ("\(total) - \(c)", a)
+            case "equate":
+                let total = a + c
+                return ("\(a) + ? = \(total)", c)
+            default:
+                return ("\(a) + \(b)", a + b) // Fallback, though this case shouldn't occur
+            }
+        }()
         
         return createQuestion(text: text, answer: answer)
     }
 
     // Generate intermediate fraction questions
-    static func generateIntermediateFractionOperation() -> Question {
-        let numerator = Int.random(in: 1...9)
-        let denominator = Int.random(in: 2...9)
-        let multiplier = Int.random(in: 1...10)
-        let answer = (numerator * multiplier) / denominator
+    static func generateDifficulty4() -> Question {
+        let operations = ["*", "/", "+", "-", "equate"]
+        let operation = operations.randomElement()!
         
-        let text = "\(numerator * multiplier) / \(denominator)"
+        let (text, answer): (String, Int) = {
+            let a = Int.random(in: 11...99)
+            let b = Int.random(in: 11...99)
+            let c = Int.random(in: 100...999)
+            switch operation {
+            case "*":
+                return ("\(a) x \(b)", a * b)
+            case "/":
+                let f = Int.random(in: 3...20)
+                let dividend = a * f  // Ensures clean division
+                return ("\(dividend) / \(f)", a)
+            case "+":
+                return ("\(c) + \(a)", a + c)
+            case "-":
+                let total = a + c  // Ensures a non-negative result for subtraction
+                return ("\(total) - \(c)", a)
+            case "equate":
+                let total = a + c
+                return ("\(a) + ? = \(total)", c)
+            default:
+                return ("\(a) + \(b)", a + b) // Fallback, though this case shouldn't occur
+            }
+        }()
+        
         return createQuestion(text: text, answer: answer)
     }
 
     // Generate difficult mental math questions
-    static func generateComplexMentalMath() -> Question {
-        let a = Int.random(in: 50...200)
-        let b = Int.random(in: 2...20)
-        let c = Int.random(in: 1...10)
-        let d = Int.random(in: 1...5)
+    static func generateDifficulty5() -> Question {
+        let operations = ["*", "/", "+", "-", "equate"]
+        let operation = operations.randomElement()!
         
-        let expressionOptions = [
-            ("\(a) + \(b) * \(c)", a + b * c),
-            ("\(a) - \(b) * \(c)", a - b * c),
-            ("(\(a) + \(b)) / \(d)", (a + b) / d),
-            ("\(a) * \(c) + \(b)", a * c + b)
-        ]
+        let (text, answer): (String, Int) = {
+            let a = Int.random(in: 11...99)
+            let b = Int.random(in: 11...99)
+            switch operation {
+            case "*":
+                return ("\(a) x \(b)", a * b)
+            case "/":
+                let dividend = a * b  // Ensures clean division
+                return ("\(dividend) / \(b)", a)
+            case "+":
+                let c = Int.random(in: 100...999)
+                return ("\(a) + \(c)", a + c)
+            case "-":
+                let d = Int.random(in: 100...999)
+                let total = a + d  // Ensures a non-negative result for subtraction
+                return ("\(total) - \(d)", a)
+            case "equate":
+                let e = Int.random(in: 100...999)
+                let total = a + e
+                return ("\(a) + ? = \(total)", e)
+            default:
+                return ("\(a) + \(b)", a + b) // Fallback, though this case shouldn't occur
+            }
+        }()
         
-        let (text, answer) = expressionOptions.randomElement()!
         return createQuestion(text: text, answer: answer)
     }
 
